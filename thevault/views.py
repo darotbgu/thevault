@@ -72,7 +72,11 @@ class Registration(APIView):
 @permission_classes([IsAuthenticated])
 class Authentications(ListCreateAPIView):
     def list(self, request, *args, **kwargs):
-        user_auth_data = AuthenticationData.objects.filter(user=request.user)
+        try:
+            user_auth_data = AuthenticationData.objects.filter(user=request.user)
+        except (DatabaseError, ValidationError) as exp:
+            return Response(create_response_data(success=False, msg=str(exp)))
+
         return Response(create_user_auth_data_response(user_auth_data))
 
     def post(self, request, *args, **kwargs):
