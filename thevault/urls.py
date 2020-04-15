@@ -16,6 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from thevault.views import *
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path(r'users/login/', Login.as_view()),
+    path(r'users/logout/', Logout.as_view()),
+    path(r'users/register/', Registration.as_view())
 ]
