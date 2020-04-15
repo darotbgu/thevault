@@ -22,5 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path(r'users/login/', Login.as_view()),
     path(r'users/logout/', Logout.as_view()),
-    path(r'users/register/', Registration.as_view())
+    path(r'users/register/', Registration.as_view()),
+    path(r'authentications/', Authentications.as_view()),
+    path(r'authentications/<int:site_id>/', AuthenticationUpdate.as_view())
 ]
