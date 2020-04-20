@@ -23,8 +23,8 @@ class Login(ObtainAuthToken):
             return Response({ERROR_MSG_KEY: BAD_REQUEST_MSG.format(key=missing_key)},
                             status=HTTP_400_BAD_REQUEST)
 
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST[USERNAME_KEY]
+        password = request.POST[PASSWORD_KEY]
 
         user = authenticate(request, username=username, password=password)
         if not user:
@@ -32,7 +32,8 @@ class Login(ObtainAuthToken):
         login(request, user)
         token, created = Token.objects.get_or_create(user=user)
 
-        return Response({"auth_token": token.key})
+        return Response({"auth_token": token.key,
+                         "msg": SUCCESSFUL_LOGIN_MSG.format(first_name=user.first_name, last_name=user.last_name)})
 
 
 @permission_classes([IsAuthenticated])
@@ -49,19 +50,23 @@ class Registration(APIView):
 
     def post(self, request, *args, **kwargs):
 
-        missing_key = validate_request_data(request.POST, [USERNAME_KEY, PASSWORD_KEY])
+        missing_key = validate_request_data(request.POST, [USERNAME_KEY, PASSWORD_KEY, NAME_KEY, SURNAME_KEY])
         if missing_key:
             return Response({ERROR_MSG_KEY: BAD_REQUEST_MSG.format(key=missing_key)},
                             status=HTTP_400_BAD_REQUEST)
 
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST[USERNAME_KEY]
+        password = request.POST[PASSWORD_KEY]
+        first_name = request.POST[NAME_KEY]
+        last_name = request.POST[SURNAME_KEY]
+
         try:
             if User.objects.filter(username=username).exists():
                 return Response({ERROR_MSG_KEY: CONFLICT_MSG.format(obj="User")},
                                 status=HTTP_409_CONFLICT)
 
-            user = User.objects.create_user(username=username, password=password)
+            user = User.objects.create_user(username=username, password=password,
+                                            first_name=first_name, last_name=last_name)
             user.save()
         except (DatabaseError, ValidationError) as exp:
             return Response(create_response_data(success=False, msg=str(exp)))
