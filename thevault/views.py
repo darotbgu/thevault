@@ -18,13 +18,13 @@ from thevault.consts import *
 class Login(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
-        missing_key = validate_request_data(request.POST, [USERNAME_KEY, PASSWORD_KEY])
+        missing_key = validate_request_data(request.data, [USERNAME_KEY, PASSWORD_KEY])
         if missing_key:
             return Response({ERROR_MSG_KEY: BAD_REQUEST_MSG.format(key=missing_key)},
                             status=HTTP_400_BAD_REQUEST)
 
-        username = request.POST[USERNAME_KEY]
-        password = request.POST[PASSWORD_KEY]
+        username = request.data[USERNAME_KEY]
+        password = request.data[PASSWORD_KEY]
 
         user = authenticate(request, username=username, password=password)
         if not user:
@@ -50,15 +50,15 @@ class Registration(APIView):
 
     def post(self, request, *args, **kwargs):
 
-        missing_key = validate_request_data(request.POST, [USERNAME_KEY, PASSWORD_KEY, NAME_KEY, SURNAME_KEY])
+        missing_key = validate_request_data(request.data, [USERNAME_KEY, PASSWORD_KEY, NAME_KEY, SURNAME_KEY])
         if missing_key:
             return Response({ERROR_MSG_KEY: BAD_REQUEST_MSG.format(key=missing_key)},
                             status=HTTP_400_BAD_REQUEST)
 
-        username = request.POST[USERNAME_KEY]
-        password = request.POST[PASSWORD_KEY]
-        first_name = request.POST[NAME_KEY]
-        last_name = request.POST[SURNAME_KEY]
+        username = request.data[USERNAME_KEY]
+        password = request.data[PASSWORD_KEY]
+        first_name = request.data[NAME_KEY]
+        last_name = request.data[SURNAME_KEY]
 
         try:
             if User.objects.filter(username=username).exists():
@@ -85,14 +85,14 @@ class Authentications(ListCreateAPIView):
         return Response(create_user_auth_data_response(user_auth_data))
 
     def post(self, request, *args, **kwargs):
-        missing_key = validate_request_data(request.POST, [USERNAME_KEY, PASSWORD_KEY, SITE_KEY])
+        missing_key = validate_request_data(request.data, [USERNAME_KEY, PASSWORD_KEY, SITE_KEY])
         if missing_key:
             return Response({ERROR_MSG_KEY: BAD_REQUEST_MSG.format(key=missing_key)},
                             status=HTTP_400_BAD_REQUEST)
 
-        site_name = request.POST[SITE_KEY]
-        username = request.POST[USERNAME_KEY]
-        password = request.POST[PASSWORD_KEY]
+        site_name = request.data[SITE_KEY]
+        username = request.data[USERNAME_KEY]
+        password = request.data[PASSWORD_KEY]
         try:
             if Site.objects.filter(name=site_name).exists():
                 return Response({ERROR_MSG_KEY: CONFLICT_MSG.format(obj="Site")},
@@ -113,13 +113,13 @@ class Authentications(ListCreateAPIView):
 @permission_classes([IsAuthenticated])
 class AuthenticationUpdate(APIView):
     def post(self, request, site_id, *args, **kwargs):
-        missing_key = validate_request_data(request.POST, [USERNAME_KEY, PASSWORD_KEY])
+        missing_key = validate_request_data(request.data, [USERNAME_KEY, PASSWORD_KEY])
         if missing_key:
             return Response({ERROR_MSG_KEY: BAD_REQUEST_MSG.format(key=missing_key)},
                             status=HTTP_400_BAD_REQUEST)
 
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.data['username']
+        password = request.data['password']
 
         try:
             site = Site.objects.get(pk=site_id)
