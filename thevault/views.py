@@ -32,8 +32,11 @@ class Login(ObtainAuthToken):
         login(request, user)
         token, created = Token.objects.get_or_create(user=user)
 
-        return Response({"auth_token": token.key,
-                         "msg": SUCCESSFUL_LOGIN_MSG.format(first_name=user.first_name, last_name=user.last_name)})
+        response = create_response_data(data={"authToken": token.key,
+                                              "username": user.username,
+                                              "firstName": user.first_name,
+                                              "lastName": user.last_name})
+        return Response(response)
 
 
 @permission_classes([IsAuthenticated])
