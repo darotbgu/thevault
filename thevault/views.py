@@ -78,7 +78,7 @@ class Registration(APIView):
 
 
 @permission_classes([IsAuthenticated])
-class Artifacts(ListCreateAPIView):
+class ArtifactsData(ListCreateAPIView):
     def list(self, request, *args, **kwargs):
         try:
             user_artifacts = Artifacts.objects.filter(user=request.user)
@@ -88,7 +88,7 @@ class Artifacts(ListCreateAPIView):
         return Response(create_user_artifacts_response(user_artifacts))
 
     def post(self, request, *args, **kwargs):
-        missing_key = validate_request_data(request.data, [JEDI_KEY, SITH_KEY, HOLOCRON_KEY])
+        missing_key = validate_request_data(request.data, [JEDI_KEY, SITH_KEY, HOLOCRON_KEY, FORCE_KEY])
         if missing_key:
             return Response({ERROR_MSG_KEY: BAD_REQUEST_MSG.format(key=missing_key)},
                             status=HTTP_400_BAD_REQUEST)
@@ -96,14 +96,16 @@ class Artifacts(ListCreateAPIView):
         crystal = request.data[HOLOCRON_KEY]
         jedi = request.data[JEDI_KEY]
         sith = request.data[SITH_KEY]
+        force = request.data[FORCE_KEY]
+
         try:
-            if Holocron.objects.filter(name=crystal).exists():
+            if Holocron.objects.filter(crystal=crystal).exists():
                 return Response({ERROR_MSG_KEY: CONFLICT_MSG.format(obj="Holocron")},
                                 status=HTTP_409_CONFLICT)
-            holocron = Holocron(name=crystal)
+            holocron = Holocron(crystal=crystal)
             holocron.save()
 
-            artifact = Artifacts(user=request.user, site=holocron, jedi=jedi, sith=sith)
+            artifact = Artifacts(user=request.user, holocron=holocron, jedi=jedi, sith=sith, force=force)
             artifact.save()
 
             user_artifacts = Artifacts.objects.filter(user=request.user)
@@ -116,13 +118,14 @@ class Artifacts(ListCreateAPIView):
 @permission_classes([IsAuthenticated])
 class ArtifactsUpdate(APIView):
     def post(self, request, holocron_id, *args, **kwargs):
-        missing_key = validate_request_data(request.data, [USERNAME_KEY, PASSWORD_KEY])
+        missing_key = validate_request_data(request.data, [USERNAME_KEY, PASSWORD_KEY, FORCE_KEY])
         if missing_key:
             return Response({ERROR_MSG_KEY: BAD_REQUEST_MSG.format(key=missing_key)},
                             status=HTTP_400_BAD_REQUEST)
 
         jedi = request.data[JEDI_KEY]
         sith = request.data[SITH_KEY]
+        force = request.data[FORCE_KEY]
 
         try:
             holocron = Holocron.objects.get(pk=holocron_id)
@@ -135,6 +138,7 @@ class ArtifactsUpdate(APIView):
             artifact = Artifacts.objects.get(holocron=holocron)
             artifact.jedi = jedi
             artifact.sith = sith
+            artifact.force = force
             artifact.save()
         except (MultipleObjectsReturned, ValidationError, DatabaseError) as exp:
             return Response(create_response_data(success=False, msg=str(exp)))
@@ -155,7 +159,8 @@ def create_artifact_dict(artifact):
         "holocron_id": artifact.holocron.id,
         "crystal": artifact.holocron.crystal,
         "jedi": artifact.jedi,
-        "sith": artifact.sith
+        "sith": artifact.sith,
+        "force": artifact.force
     }
 
 

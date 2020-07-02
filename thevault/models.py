@@ -11,5 +11,6 @@ class Artifacts(models.Model):
     holocron = models.ForeignKey(Holocron, on_delete=models.CASCADE)
     jedi = models.TextField()
     sith = models.TextField()
+    force = models.TextField()
 
 

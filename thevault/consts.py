@@ -3,9 +3,10 @@ SURNAME_KEY = "last_name"
 USERNAME_KEY = "username"
 PASSWORD_KEY = "password"
 
-HOLOCRON_KEY = "holocron"
+HOLOCRON_KEY = "crystal"
 JEDI_KEY = "jedi"
 SITH_KEY = "sith"
+FORCE_KEY = "force"
 
 
 ERROR_MSG_KEY = "msg"

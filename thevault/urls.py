@@ -23,6 +23,6 @@ urlpatterns = [
     path(r'users/login/', Login.as_view()),
     path(r'users/logout/', Logout.as_view()),
     path(r'users/register/', Registration.as_view()),
-    path(r'artifacts/', Artifacts.as_view()),
+    path(r'artifacts/', ArtifactsData.as_view()),
     path(r'artifacts/<int:holocron_id>/', ArtifactsUpdate.as_view())
 ]
