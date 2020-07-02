@@ -118,7 +118,7 @@ class ArtifactsData(ListCreateAPIView):
 @permission_classes([IsAuthenticated])
 class ArtifactsUpdate(APIView):
     def post(self, request, holocron_id, *args, **kwargs):
-        missing_key = validate_request_data(request.data, [USERNAME_KEY, PASSWORD_KEY, FORCE_KEY])
+        missing_key = validate_request_data(request.data, [JEDI_KEY, SITH_KEY, FORCE_KEY])
         if missing_key:
             return Response({ERROR_MSG_KEY: BAD_REQUEST_MSG.format(key=missing_key)},
                             status=HTTP_400_BAD_REQUEST)
