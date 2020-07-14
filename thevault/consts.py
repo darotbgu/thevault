@@ -13,7 +13,7 @@ ERROR_MSG_KEY = "msg"
 
 BAD_REQUEST_MSG = "Missing {key}"
 CONFLICT_MSG = "{obj} already exists"
-USER_NOT_EXIST_MSG = "User does not exists"
+USER_FAIL_AUTH_MSG = "Incorrect username or password"
 
 SUCCESSFUL_ADD_MSG = "Artifact was added successfully"
 SUCCESSFUL_UPDATE_MSG = "Updated artifact successfully"

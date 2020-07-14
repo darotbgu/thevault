@@ -28,7 +28,7 @@ class Login(ObtainAuthToken):
 
         user = authenticate(request, username=username, password=password)
         if not user:
-            return Response({ERROR_MSG_KEY: USER_NOT_EXIST_MSG}, status=HTTP_401_UNAUTHORIZED)
+            return Response({ERROR_MSG_KEY: USER_FAIL_AUTH_MSG}, status=HTTP_401_UNAUTHORIZED)
         login(request, user)
         token, created = Token.objects.get_or_create(user=user)
 
